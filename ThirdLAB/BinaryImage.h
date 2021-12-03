@@ -41,7 +41,36 @@ private:
 
     };
     
-
+    class MyIterator {
+        int currRow;
+        int currCol;
+        BinaryImage& parent;
+    public:
+        MyIterator(BinaryImage& img) : currRow(0), currCol(0), parent(img) {}//1-
+        MyIterator(BinaryImage& img, int currRow) : currRow(currRow), currCol(0), parent(img) {}//1
+        MyIterator(const MyIterator& rhs) : currRow(rhs.currRow), currCol(rhs.currCol), parent(rhs.parent) {}//1
+        MyIterator& operator++() {
+            if (currCol < parent.cols)
+                currCol++;
+            if (currCol == parent.cols) {
+                currCol = 0;
+                currRow++;
+            }
+            return *this;
+        }
+        MyIterator operator++(int) {
+            MyIterator tmp(*this); operator++(); return tmp;
+        }
+        bool operator==(const MyIterator& rhs) const {
+            return currRow == rhs.currRow && currCol == rhs.currCol;
+        }
+        bool operator!=(const MyIterator& rhs) const {
+            return !(currRow == rhs.currRow && currCol == rhs.currCol);
+        }
+        TT& operator*() {
+            return parent.data[currRow][currCol];
+        }
+    };
     std::vector<std::vector<TT>> data;//0()3-делегируем управление памятью контейнеру
     int cols;
     int rows;
@@ -65,7 +94,12 @@ public:
             data.push_back(d);
         }
     }
- 
+    MyIterator begin() {//1(Заполнение конструктором по умолчанию)
+        return MyIterator(*this);
+    }
+    MyIterator end() {//1
+        return MyIterator(*this, rows);
+    }
     double Ratio() {
         int count = 0;
         for (int i = 0; i < rows; ++i)
