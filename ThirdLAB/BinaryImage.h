@@ -7,7 +7,7 @@
 template<typename T, T falseValue, T trueValue>
 class BinaryImage {
 private:
-    class TT {//¬спомогательный класс
+    class TT {
     public:
         T data;
         TT& operator=(bool value) {
@@ -16,13 +16,13 @@ private:
             else
                 data = falseValue;
             return *this;
-        }//присваиваем значение €чейке при работе с типом данных bool
+        }
         TT& operator=(T value) {
             if (value != trueValue && value != falseValue)
                 throw "invalid value assignment";
             data = value;
             return *this;
-        }//присваивание значени€ €чейке типа данных int(через конструктор)
+        }
         bool operator==(T value) {
             if (value == data)
                 return true;
@@ -40,8 +40,7 @@ private:
         }
 
     };
-    
-    class MyIterator {
+    class MyIterator {//ѕодкласс итераторов
         int currRow;
         int currCol;
         BinaryImage& parent;
@@ -49,7 +48,7 @@ private:
         MyIterator(BinaryImage& img) : currRow(0), currCol(0), parent(img) {}//1-
         MyIterator(BinaryImage& img, int currRow) : currRow(currRow), currCol(0), parent(img) {}//1
         MyIterator(const MyIterator& rhs) : currRow(rhs.currRow), currCol(rhs.currCol), parent(rhs.parent) {}//1
-        MyIterator& operator++() {
+        MyIterator& operator++() {//сдвиг на следующий элемент класса (переход к следующей €чейке)
             if (currCol < parent.cols)
                 currCol++;
             if (currCol == parent.cols) {
@@ -64,14 +63,14 @@ private:
         bool operator==(const MyIterator& rhs) const {
             return currRow == rhs.currRow && currCol == rhs.currCol;
         }
-        bool operator!=(const MyIterator& rhs) const {
+        bool operator!=(const MyIterator& rhs) const {//данные €чеек итератора совпадают с данными €чеек объекта класса
             return !(currRow == rhs.currRow && currCol == rhs.currCol);
         }
         TT& operator*() {
             return parent.data[currRow][currCol];
         }
     };
-    std::vector<std::vector<TT>> data;//0()3-делегируем управление пам€тью контейнеру
+    std::vector<std::vector<TT>> data;//первый пункт
     int cols;
     int rows;
 public:
@@ -94,10 +93,10 @@ public:
             data.push_back(d);
         }
     }
-    MyIterator begin() {//1(«аполнение конструктором по умолчанию)
+    MyIterator begin() {
         return MyIterator(*this);
     }
-    MyIterator end() {//1
+    MyIterator end() {
         return MyIterator(*this, rows);
     }
     double Ratio() {
